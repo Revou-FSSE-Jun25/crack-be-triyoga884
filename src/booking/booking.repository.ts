@@ -50,6 +50,24 @@ export class BookingRepository {
     });
   }
 
+  getBookingAndWorkSpaceById(id: string) {
+    return this.prisma.booking.findFirst({
+      where: { id },
+      include: {
+        coworkingSpace: {
+          select: {
+            name: true,
+            description: true,
+            address: true,
+            type: true,
+            amenities: true,
+            pricePerDay: true,
+          },
+        },
+      },
+    });
+  }
+
   update(id: string, data: UpdateBookingDto) {
     return this.prisma.booking.update({
       where: { id },

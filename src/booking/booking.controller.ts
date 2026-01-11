@@ -66,6 +66,13 @@ export class BookingController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('USER')
+  @Get('checkout/:id')
+  getCheckoutData(@Param('id') id: string, @Req() req: { user: reqProp }) {
+    return this.bookingService.getBookingAndWorkspaceById(id, req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,

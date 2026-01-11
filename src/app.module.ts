@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module.js';
 import { CoworkingSpaceModule } from './coworking-space/coworking-space.module.js';
 import { CustomLoggerModule } from './common/logger/logger.module.js';
 import { BookingModule } from './booking/booking.module.js';
+import { PaymentModule } from './payment/payment.module.js';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BookingModule } from './booking/booking.module.js';
     CoworkingSpaceModule,
     CustomLoggerModule,
     BookingModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
