@@ -57,19 +57,15 @@ export class AuthController {
     return this.authService.userLogout(req.user.userId);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('refresh')
   async refresh(
     @Req()
-    req: Request & { cookies?: { refresh_token?: string }; user?: reqProp },
+    req: Request & { cookies?: { refresh_token?: string } },
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken = req.cookies?.refresh_token || '';
-
-    const userId = req.user?.userId || '';
-
+    const refreshToken = req.cookies?.refresh_token;
     const { access_token, refresh_token: newRefreshToken } =
-      await this.authService.refreshToken(userId, refreshToken);
+      await this.authService.refreshToken(refreshToken!);
 
     res.cookie('refresh_token', newRefreshToken, {
       httpOnly: true,

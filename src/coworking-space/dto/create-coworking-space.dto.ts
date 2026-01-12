@@ -22,6 +22,9 @@ export class CreateCoworkingSpaceDto {
   @IsNumber()
   pricePerDay: number;
 
+  @IsNumber()
+  capacity: number;
+
   @IsString()
   type: RoomType;
 }

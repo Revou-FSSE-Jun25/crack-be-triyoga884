@@ -19,9 +19,25 @@ export class CoworkingSpaceRepository {
   async getWorkspacesByUserId(id: string) {
     const result = await this.prisma.user.findUnique({
       where: { id },
-      include: { coworkingSpaces: true },
+      include: {
+        coworkingSpaces: {
+          select: {
+            id: true,
+            name: true,
+            address: true,
+            description: true,
+            amenities: true,
+            images: true,
+            pricePerDay: true,
+            type: true,
+            capacity: true,
+            isActive: true,
+            isVerified: true,
+          },
+        },
+      },
     });
-    return result;
+    return result?.coworkingSpaces;
   }
 
   findAll() {

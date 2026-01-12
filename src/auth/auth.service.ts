@@ -68,7 +68,11 @@ export class AuthService {
     }
   }
 
-  async refreshToken(userId: string, token: string) {
+  async refreshToken(token: string) {
+    const data = await this.jwtService.verifyAsync(token, {
+      secret: process.env.JWT_SECRET,
+    });
+    const userId = data.sub;
     const user = await this.userRepository.findOne(userId);
     if (!user || !user.refresh_token)
       throw new BadRequestException('Account not found');

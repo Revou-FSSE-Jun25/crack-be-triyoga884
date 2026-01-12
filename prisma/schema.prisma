@@ -74,6 +74,7 @@ model CoworkingSpace {
   images      String[]
   pricePerDay Float
   type        RoomType
+  capacity    Int
   isActive    Boolean  @default(true)
   isVerified  Boolean  @default(false)
 

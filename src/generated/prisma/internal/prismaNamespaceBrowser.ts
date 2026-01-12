@@ -99,6 +99,7 @@ export const CoworkingSpaceScalarFieldEnum = {
   images: 'images',
   pricePerDay: 'pricePerDay',
   type: 'type',
+  capacity: 'capacity',
   isActive: 'isActive',
   isVerified: 'isVerified',
   createdAt: 'createdAt',
