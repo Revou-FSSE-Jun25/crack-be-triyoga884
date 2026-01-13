@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from '../user/dto/create-user.dto.js';
 import { AuthService } from './auth.service.js';
-import type { reqProp } from '../common/types/types.js';
-import { JwtAuthGuard } from './jwt.auth-guard.js';
 import type { Response, Request } from 'express';
+import { JwtAuthGuard } from './jwt.auth-guard.js';
+import { reqProp } from '../common/types/types.js';
 
 @Controller('auth')
 export class AuthController {
@@ -27,10 +27,8 @@ export class AuthController {
     @Body() data: { email: string; password: string },
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { access_token, refresh_token } = await this.authService.userLogin(
-      data.email,
-      data.password,
-    );
+    const { access_token, refresh_token, message } =
+      await this.authService.userLogin(data.email, data.password);
 
     res.cookie('refresh_token', refresh_token, {
       httpOnly: true,
@@ -39,7 +37,14 @@ export class AuthController {
       path: '/',
     });
 
-    return { access_token };
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      path: '/',
+    });
+
+    return { message };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -49,6 +54,12 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     res.clearCookie('refresh_token', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      path: '/',
+    });
+    res.clearCookie('access_token', {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
@@ -64,8 +75,11 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const refreshToken = req.cookies?.refresh_token;
-    const { access_token, refresh_token: newRefreshToken } =
-      await this.authService.refreshToken(refreshToken!);
+    const {
+      access_token,
+      refresh_token: newRefreshToken,
+      message,
+    } = await this.authService.refreshToken(refreshToken!);
 
     res.cookie('refresh_token', newRefreshToken, {
       httpOnly: true,
@@ -74,14 +88,19 @@ export class AuthController {
       path: '/',
     });
 
-    return {
-      accessToken: access_token,
-    };
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      path: '/',
+    });
+
+    return { message };
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  me(@Req() req: { user: reqProp }) {
+  async me(@Req() req: { user: reqProp }) {
     return req.user;
   }
 }

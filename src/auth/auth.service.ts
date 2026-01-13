@@ -49,19 +49,21 @@ export class AuthService {
     const user = await this.validateUser(email, password);
     if (!user) throw new BadRequestException('Email or password invalid');
 
-    return this.login({
+    const result = await this.login({
       email,
       userId: user.id,
       role: user.role,
     });
+
+    return { message: 'User Login Success', ...result };
   }
 
-  async userLogout(userId: string) {
-    const user = await this.userRepository.findOne(userId);
+  async userLogout(id: string) {
+    const user = await this.userRepository.findOne(id);
     if (!user || !user.refresh_token)
       throw new BadRequestException('User not found');
     try {
-      await this.userRepository.update(userId, { refresh_token: null });
+      await this.userRepository.update(id, { refresh_token: null });
       return { message: 'User logout success!' };
     } catch (error) {
       return { message: 'User logout failed!' };
@@ -94,6 +96,7 @@ export class AuthService {
     return {
       access_token,
       refresh_token,
+      message: 'Refresh Success!',
     };
   }
 
