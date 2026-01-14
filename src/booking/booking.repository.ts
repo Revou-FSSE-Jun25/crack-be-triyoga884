@@ -22,7 +22,13 @@ export class BookingRepository {
   }
 
   findAll() {
-    return this.prisma.booking.findMany();
+    return this.prisma.booking.findMany({
+      include: {
+        payment: { select: { method: true, status: true } },
+        user: { select: { name: true } },
+        coworkingSpace: { select: { name: true } },
+      },
+    });
   }
 
   findOne(id: string) {
@@ -47,6 +53,21 @@ export class BookingRepository {
   findBySpaceId(coworkingSpaceId: string) {
     return this.prisma.booking.findMany({
       where: { coworkingSpaceId },
+    });
+  }
+
+  findBookingsForMyWorkspaces(ownerId: string) {
+    return this.prisma.booking.findMany({
+      where: {
+        coworkingSpace: {
+          ownerId,
+        },
+      },
+      include: {
+        payment: { select: { method: true, status: true } },
+        user: { select: { name: true } },
+        coworkingSpace: { select: { name: true } },
+      },
     });
   }
 

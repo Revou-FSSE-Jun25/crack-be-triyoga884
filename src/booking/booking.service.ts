@@ -106,6 +106,12 @@ export class BookingService {
     return this.repo.findBySpaceId(coworkingSpaceId);
   }
 
+  async findBookingsForMyWorkspaces(userId: string) {
+    const data = await this.repo.findBookingsForMyWorkspaces(userId);
+    if (!data) throw new NotFoundException('Booking data not found');
+    return data;
+  }
+
   async getBookingAndWorkspaceById(id: string, userId: string) {
     const data = await this.repo.getBookingAndWorkSpaceById(id);
     if (!data)

@@ -17,7 +17,7 @@ import { RolesGuard } from '../common/guards/roles.guard.js';
 import { reqProp } from '../common/types/types.js';
 import { Roles } from '../common/decorators/roles.decorator.js';
 
-@Controller('booking')
+@Controller('bookings')
 export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
 
@@ -57,7 +57,14 @@ export class BookingController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('space/:id')
+  @Roles('PROVIDER')
+  @Get('workspace/me')
+  findBookingsForMyWorkspaces(@Req() req: { user: reqProp }) {
+    return this.bookingService.findBookingsForMyWorkspaces(req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('workspace/:id')
   findBySpaceId(
     @Param('id') coworkingSpaceId: string,
     @Req() req: { user: reqProp },
