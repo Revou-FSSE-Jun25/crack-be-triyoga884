@@ -47,6 +47,42 @@ export class AuthController {
     return { message };
   }
 
+  @Post('refresh')
+  async refresh(
+    @Req()
+    req: Request & { cookies?: { refresh_token?: string } },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = req.cookies?.refresh_token;
+    const {
+      access_token,
+      refresh_token: newRefreshToken,
+      message,
+    } = await this.authService.refreshToken(refreshToken!);
+
+    res.cookie('refresh_token', newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      path: '/',
+    });
+
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      path: '/',
+    });
+
+    return { message };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  async me(@Req() req: { user: reqProp }) {
+    return req.user;
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   logout(
@@ -66,41 +102,5 @@ export class AuthController {
       path: '/',
     });
     return this.authService.userLogout(req.user.userId);
-  }
-
-  @Post('refresh')
-  async refresh(
-    @Req()
-    req: Request & { cookies?: { refresh_token?: string } },
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const refreshToken = req.cookies?.refresh_token;
-    const {
-      access_token,
-      refresh_token: newRefreshToken,
-      message,
-    } = await this.authService.refreshToken(refreshToken!);
-
-    res.cookie('refresh_token', newRefreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-    });
-
-    res.cookie('access_token', access_token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      path: '/',
-    });
-
-    return { message };
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('me')
-  async me(@Req() req: { user: reqProp }) {
-    return req.user;
   }
 }
