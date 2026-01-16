@@ -17,19 +17,20 @@ export class CoworkingSpaceRepository {
     });
   }
 
-  async getWorkspacesByUserId(id: string) {
-    const result = this.prisma.coworkingSpace.findMany({
-      where: { ownerId: id },
+  async findAll(isVerified: boolean) {
+    const result = await this.prisma.coworkingSpace.findMany({
+      where: { isVerified },
       include: { owner: { select: { name: true } } },
     });
     return result;
   }
 
-  findAll(isVerified?: boolean) {
-    return this.prisma.coworkingSpace.findMany({
-      where: { isVerified: isVerified },
+  async getWorkspacesByUserId(id: string) {
+    const result = await this.prisma.coworkingSpace.findMany({
+      where: { ownerId: id },
       include: { owner: { select: { name: true } } },
     });
+    return result;
   }
 
   findOne(id: string) {

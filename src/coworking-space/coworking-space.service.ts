@@ -40,7 +40,7 @@ export class CoworkingSpaceService {
     return user;
   }
 
-  async findAll(isVerified?: boolean) {
+  async findAll(isVerified: boolean) {
     const workspaces = await this.repo.findAll(isVerified);
     if (!workspaces) throw new NotFoundException('No coworking spaces found');
     return workspaces;

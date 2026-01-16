@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   Query,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import { CoworkingSpaceService } from './coworking-space.service.js';
 import { CreateCoworkingSpaceDto } from './dto/create-coworking-space.dto.js';
@@ -33,13 +34,13 @@ export class CoworkingSpaceController {
     return this.coworkingSpaceService.create(createCoworkingSpaceDto, req.user);
   }
 
-  @Get()
+  @Get('search')
   findByQuery(@Query('name') name: string, @Query('type') type: RoomType) {
     return this.coworkingSpaceService.findCoworkingSpaceByQuery(name, type);
   }
 
   @Get()
-  findAll(@Query('isVerified') isVerified?: boolean) {
+  findAll(@Query('isVerified', ParseBoolPipe) isVerified: boolean) {
     return this.coworkingSpaceService.findAll(isVerified);
   }
 
