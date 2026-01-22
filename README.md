@@ -5,6 +5,10 @@ It provides authentication, coworking space management, bookings, payments, and 
 
 ---
 
+## Database ERD
+
+![Alt text](database-schema.png)
+
 ## Tech Stack
 
 - Node.js (TypeScript, ES modules)
